@@ -1,0 +1,21 @@
+{
+	"geode": "4.1.1",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"api": {
+		"include": [
+			"include/Main.hpp",
+			"include/ccDialogHooks.hpp"
+		]
+	},
+	"id": "viper.better_dialog",
+	"name": "Better Dialog API",
+	"version": "v1.0.0",
+	"tags": ["developer","offline","interface"],
+	"developer": "Viper",
+	"description": "Better Dialog API adds a easier more managable way to modify Dialog!"
+}
