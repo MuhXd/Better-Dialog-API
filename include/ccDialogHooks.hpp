@@ -10,6 +10,44 @@ using namespace geode::prelude;
 // m_fields but for ccobject scuffed method
 // if someone wants to see this class then sure ig? i don't mind
 namespace Viper_funnyutils {
+    static CCSprite* IsSprite(std::string def) {
+        const char* str = def.c_str();
+        CCSprite* sprite = CCSprite::create(str);
+        if (sprite) {
+            return sprite;
+        }
+        sprite = CCSprite::createWithSpriteFrameName(str);
+         if (sprite) {
+            return sprite;
+         }
+
+        sprite = CCSprite::createWithSpriteFrameName("dialogIcon_001.png");
+         if (sprite) {
+            return sprite;
+        }
+        return nullptr;
+        
+    }
+    /*
+        example of the json file
+        {
+            "color": 2,
+            "lines": [
+                {
+                    "portrait": 12,
+                    "title": "Rick",
+                    "message": "We're no strangers to love, {user}!"
+                },
+                {
+                    "portrait": 13,
+                    "title": "Rick",
+                    "message": "You know the rules, and so do I!"
+                },
+            ]
+        }
+    */
+   // this function is used to gen a background and text
+    static std::pair<CCArray*, int> readjsonData(matjson::Value data);
     std::string getTextureName(CCSprite* sprite) {
      std::string texturePath = "";
      if (auto textureProtocol = typeinfo_cast<CCTextureProtocol*>(sprite)) {
@@ -179,6 +217,62 @@ class $modify(VP_DialogObject,DialogObject) {
              Viper_funnyutils::FucktheM_fieldsInCCObjects_DialogObject.erase(it);
         }
     }
+};
+static std::pair<CCArray*, int> Viper_funnyutils::readjsonData(matjson::Value data) {
+        std::pair<CCArray*, int> letsgo;
+        letsgo.second = 2;
+        if (!data.isArray()) {
+            return letsgo;
+        }
+        if (data.contains("color") && data["color"].isNumber()) {
+            letsgo.second = data["color"].asInt().unwrapOr(2);
+        }
+         if (data.contains("lines") && data["lines"].isArray()) {
+            for (const auto lols : data["lines"].asArray().unwrap()) {
+                std::string title = "Unknown";
+                if (lols.contains("title") && lols["title"].isString()) title = lols["title"].asString().unwrapOr("Unknown");
+                std::string message = "N/A";
+                if (lols.contains("message") && lols["message"].isString()) message = lols["title"].asString().unwrapOr("N/A");
+
+                int index;
+                int pos = 0;
+                std::string plrname;
+
+                while ((index = message.find("{user}", pos)) != std::string::npos) {
+                    if (plrname.empty()) {
+                        plrname = GameManager::get()->m_playerName;
+                    }
+                    message.replace(index, 6, plrname);
+
+                    pos = index + 1;
+                }
+
+
+                while ((index = title.find("{user}", pos)) != std::string::npos) {
+                    if (plrname.empty()) {
+                        plrname = GameManager::get()->m_playerName;
+                    }
+                    title.replace(index, 6, plrname);
+
+                    pos = index + 1;
+                }
+
+                if (lols.contains("portrait")) {
+                    if (lols["portrait"].isNumber()) {
+                        letsgo.first->addObject(DialogObject::create(title,message,lols["portrait"].asUInt().unwrapOr(1),false,false,ccWHITE));
+                    } else if (lols["portrait"].isString()) {
+                        if (auto spr = Viper_funnyutils::IsSprite(lols["portrait"].asString().unwrapOr(""))) {
+                            letsgo.first->addObject(VP_DialogObject::create(title,message,spr,false,false,ccWHITE));
+                        }
+                    } else {
+                         letsgo.first->addObject(DialogObject::create(title,message,1,false,false,ccWHITE));
+                    }
+                } else {
+                     letsgo.first->addObject(DialogObject::create(title,message,1,false,false,ccWHITE));
+                }
+            }
+        }
+        return letsgo;
 };
 
 class m_delegate_CallBackCustom : public DialogDelegate, public CCNode { // hacky fix to remove automaticly

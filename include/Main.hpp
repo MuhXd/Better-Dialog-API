@@ -21,6 +21,31 @@ public:
    static VP_DialogLayer* create(DialogObject* object, int background) {
         return reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::create(object,background));
    };
+   static VP_DialogLayer* createWithJson(matjson::Value json,std::function<void()> m_callback) {
+          std::pair<CCArray*, int> jsonread = Viper_funnyutils::readjsonData(json);
+          auto l = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::createWithObjects(jsonread.first,jsonread.second));
+          l->addCallbackCustom(m_callback);
+          return l;
+   };
+   static VP_DialogLayer* createWithJson(matjson::Value json) {
+          std::pair<CCArray*, int> jsonread = Viper_funnyutils::readjsonData(json);
+          auto l = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::createWithObjects(jsonread.first,jsonread.second));
+          return l;
+   };
+   static VP_DialogLayer* create(matjson::Value json) {
+          std::pair<CCArray*, int> jsonread = Viper_funnyutils::readjsonData(json);
+          auto l = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::createWithObjects(jsonread.first,jsonread.second));
+          return l;
+   };
+   static VP_DialogLayer* create(matjson::Value json, std::function<void()> m_callback) {
+          std::pair<CCArray*, int> jsonread = Viper_funnyutils::readjsonData(json);
+          auto l = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::createWithObjects(jsonread.first,jsonread.second));
+          l->addCallbackCustom(m_callback);
+          return l;
+    };
+
+
+
 
   static VP_DialogLayer* create(DialogObject* object, int background, std::function<void()> m_callback) {
          VP_DialogLayer* mass = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::create(object,background));

@@ -1,3 +1,5 @@
+# 1.0.2
+- json reader for dialogs
 # 1.0.1
 - fix leak
 - bump version
