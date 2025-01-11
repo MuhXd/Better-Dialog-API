@@ -241,7 +241,7 @@ static std::pair<CCArray*, int> Viper_funnyutils::readjsonData(matjson::Value da
             for (const auto lols : data["lines"].asArray().unwrap()) {
                 std::string title = "Unknown";
                 if (lols.contains("title") && lols["title"].isString()) title = lols["title"].asString().unwrapOr("Unknown");
-                gd::string message = "N/A";
+                std::string message = "N/A";
                 if (lols.contains("message") && lols["message"].isString()) message = lols["message"].asString().unwrapOr("N/A");
 
                 // from https://github.com/FigmentBoy/DialogHandler/blob/master/DialogBox/Dialog.cpp?plain=1#L31
