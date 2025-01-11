@@ -284,7 +284,7 @@ static std::pair<CCArray*, int> Viper_funnyutils::readjsonData(matjson::Value da
                 }
             }
         }
-        log::debug("should obj");
+        
         return letsgo;
 };
 
