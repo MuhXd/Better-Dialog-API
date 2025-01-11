@@ -218,10 +218,20 @@ class $modify(VP_DialogObject,DialogObject) {
         }
     }
 };
+
+std::string getplrname() {
+    // fix for coopeeo custom name
+    if (Mod* coopeeo_customname = Loader::get()->getLoadedMod("coopeeo.customname")) {
+        return coopeeo_customname->getSettingValue<std::string>("thename");
+    }
+    return GameManager::get()->m_playerName;
+}
 static std::pair<CCArray*, int> Viper_funnyutils::readjsonData(matjson::Value data) {
         std::pair<CCArray*, int> letsgo;
         letsgo.second = 2;
-        if (!data.isArray()) {
+        letsgo.first = CCArray::create();
+        if (!data.isArray() && !data.isObject()) {
+            letsgo.first->addObject(DialogObject::create("uh oh","it seems like the json provided is invalid",2,1.0f,false,ccWHITE));
             return letsgo;
         }
         if (data.contains("color") && data["color"].isNumber()) {
@@ -231,16 +241,17 @@ static std::pair<CCArray*, int> Viper_funnyutils::readjsonData(matjson::Value da
             for (const auto lols : data["lines"].asArray().unwrap()) {
                 std::string title = "Unknown";
                 if (lols.contains("title") && lols["title"].isString()) title = lols["title"].asString().unwrapOr("Unknown");
-                std::string message = "N/A";
-                if (lols.contains("message") && lols["message"].isString()) message = lols["title"].asString().unwrapOr("N/A");
+                gd::string message = "N/A";
+                if (lols.contains("message") && lols["message"].isString()) message = lols["message"].asString().unwrapOr("N/A");
 
+                // from https://github.com/FigmentBoy/DialogHandler/blob/master/DialogBox/Dialog.cpp?plain=1#L31
                 int index;
                 int pos = 0;
                 std::string plrname;
 
                 while ((index = message.find("{user}", pos)) != std::string::npos) {
                     if (plrname.empty()) {
-                        plrname = GameManager::get()->m_playerName;
+                        plrname = getplrname();
                     }
                     message.replace(index, 6, plrname);
 
@@ -250,28 +261,30 @@ static std::pair<CCArray*, int> Viper_funnyutils::readjsonData(matjson::Value da
 
                 while ((index = title.find("{user}", pos)) != std::string::npos) {
                     if (plrname.empty()) {
-                        plrname = GameManager::get()->m_playerName;
+                        plrname = getplrname();
                     }
                     title.replace(index, 6, plrname);
 
                     pos = index + 1;
                 }
+                // end of copying
 
                 if (lols.contains("portrait")) {
                     if (lols["portrait"].isNumber()) {
-                        letsgo.first->addObject(DialogObject::create(title,message,lols["portrait"].asUInt().unwrapOr(1),false,false,ccWHITE));
+                        letsgo.first->addObject(DialogObject::create(title,message,lols["portrait"].asUInt().unwrapOr(1),1.0f,false,ccWHITE));
                     } else if (lols["portrait"].isString()) {
                         if (auto spr = Viper_funnyutils::IsSprite(lols["portrait"].asString().unwrapOr(""))) {
-                            letsgo.first->addObject(VP_DialogObject::create(title,message,spr,false,false,ccWHITE));
+                            letsgo.first->addObject(VP_DialogObject::create(title,message,spr,1.0f,false,ccWHITE));
                         }
                     } else {
-                         letsgo.first->addObject(DialogObject::create(title,message,1,false,false,ccWHITE));
+                         letsgo.first->addObject(DialogObject::create(title,message,1,1.0f,false,ccWHITE));
                     }
                 } else {
-                     letsgo.first->addObject(DialogObject::create(title,message,1,false,false,ccWHITE));
+                     letsgo.first->addObject(DialogObject::create(title,message,1,1.0f,false,ccWHITE));
                 }
             }
         }
+        log::debug("should obj");
         return letsgo;
 };
 
@@ -299,10 +312,13 @@ class $modify(VP_DialogLayer, DialogLayer) {
     }
     void displayDialogObject(DialogObject* p0) {
         DialogLayer::displayDialogObject(p0);
-        auto parent = this->m_characterSprite->getParent();
-        if (auto x = this->m_fields->m_cur_Customprofile) {
-            x->removeFromParentAndCleanup(true);
-        };
+        CCNode* parent = this;
+        if (this->m_characterSprite) {
+            parent = this->m_characterSprite->getParent();
+            if (auto x = this->m_fields->m_cur_Customprofile) {
+                x->removeFromParentAndCleanup(true);
+            };
+        }
 
          auto it = std::find_if(
             Viper_funnyutils::FucktheM_fieldsInCCObjects_DialogObject.begin(),

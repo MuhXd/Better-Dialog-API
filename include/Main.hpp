@@ -44,9 +44,6 @@ public:
           return l;
     };
 
-
-
-
   static VP_DialogLayer* create(DialogObject* object, int background, std::function<void()> m_callback) {
          VP_DialogLayer* mass = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::create(object,background));
          mass->addCallbackCustom(m_callback);

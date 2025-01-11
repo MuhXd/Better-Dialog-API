@@ -17,6 +17,7 @@
 	},
 	"id": "viper.better_dialog",
 	"name": "Better Dialog API",
+	"early-load": true,
 	"version": "v1.0.2",
 	"tags": ["developer","offline","interface"],
 	"developer": "Viper",
