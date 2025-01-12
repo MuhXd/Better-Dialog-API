@@ -36,6 +36,7 @@ class $modify(CCKeyboardDispatcher) {
             dialog->animateInRandomSide();
             dialog->addToMainScene();
         }
+        return CCKeyboardDispatcher::dispatchKeyboardMSG(key,down,repeat);
     }
 }
 ```
@@ -64,6 +65,7 @@ class $modify(CCKeyboardDispatcher) {
             dialog->animateInRandomSide();
             dialog->addToMainScene();
         }
+        return CCKeyboardDispatcher::dispatchKeyboardMSG(key,down,repeat);
     }
 }
 ```

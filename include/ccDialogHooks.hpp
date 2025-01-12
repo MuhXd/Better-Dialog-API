@@ -275,6 +275,8 @@ static std::pair<CCArray*, int> Viper_funnyutils::readjsonData(matjson::Value da
                     } else if (lols["portrait"].isString()) {
                         if (auto spr = Viper_funnyutils::IsSprite(lols["portrait"].asString().unwrapOr(""))) {
                             letsgo.first->addObject(VP_DialogObject::create(title,message,spr,1.0f,false,ccWHITE));
+                        } else {
+                             letsgo.first->addObject(DialogObject::create(title,message,1,1.0f,false,ccWHITE));
                         }
                     } else {
                          letsgo.first->addObject(DialogObject::create(title,message,1,1.0f,false,ccWHITE));
@@ -302,6 +304,8 @@ class m_delegate_CallBackCustom : public DialogDelegate, public CCNode { // hack
 class $modify(VP_DialogLayer, DialogLayer) {
     struct Fields {
         CCNode* m_cur_Customprofile;
+        CCScale9Sprite* m_BackgroundSpr;
+        std::string m_BackgroundOverride;
     };
     void addCallbackCustom(std::function<void()> m_callback) {
         m_delegate_CallBackCustom* newdelgate = new m_delegate_CallBackCustom;
@@ -310,8 +314,41 @@ class $modify(VP_DialogLayer, DialogLayer) {
         newdelgate->m_callback = m_callback;
         this->m_delegate = newdelgate;
     }
+    void setBackground(std::string backgroundBG) {
+        this->m_fields->m_BackgroundOverride = backgroundBG;
+        if (!this->m_mainLayer) return;
+
+        if (!this->m_fields->m_BackgroundSpr) {
+            this->m_fields->m_BackgroundSpr = m_mainLayer->getChildByType<CCScale9Sprite*>(0);
+        }
+        if (this->m_fields->m_BackgroundSpr) {
+            cocos2d::CCSprite* sprite = Viper_funnyutils::IsSprite(backgroundBG);
+            cocos2d::CCSize ContentSize = this->m_fields->m_BackgroundSpr->getContentSize();
+            cocos2d::CCSpriteFrame* spriteFrame = sprite->displayFrame();
+            this->m_fields->m_BackgroundSpr->setSpriteFrame(spriteFrame);
+            this->m_fields->m_BackgroundSpr->setContentSize(ContentSize);
+        } 
+    }
+    void setBackground(int backgroundBG) {
+        std::string num = "";
+
+        if (backgroundBG < 10) {
+            num = fmt::format("0{}",backgroundBG);
+        } else {
+            num = backgroundBG;
+        };
+
+        VP_DialogLayer::setBackground(fmt::format("GJ_square{}.png",num));
+    };
+
     void displayDialogObject(DialogObject* p0) {
         DialogLayer::displayDialogObject(p0);
+
+        if (!this->m_fields->m_BackgroundOverride.empty()) {
+            log::debug("{}",this->m_fields->m_BackgroundOverride);
+            VP_DialogLayer::setBackground(this->m_fields->m_BackgroundOverride);
+        };
+
         CCNode* parent = this;
         if (this->m_characterSprite) {
             parent = this->m_characterSprite->getParent();

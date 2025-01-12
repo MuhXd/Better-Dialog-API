@@ -46,3 +46,25 @@ class $modify(FakYou,CCObject) {
         };
 };
 
+/*
+#include <Geode/modify/CCKeyboardDispatcher.hpp>
+#include <Geode/Geode.hpp>
+using namespace geode::prelude;
+
+class $modify(CCKeyboardDispatcher) {
+	bool dispatchKeyboardMSG(cocos2d::enumKeyCodes key, bool down, bool repeat) {
+        if (key == enumKeyCodes::KEY_F && down) {
+                auto dialog = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::create(VP_DialogObject::create(
+                                "Example",
+                                "Example",
+                                CCSprite::createWithSpriteFrameName("checkpoint_01_001.png"), 1.0f, false, ccWHITE
+                            ), 2));
+                dialog->setBackground(3);
+                dialog->updateChatPlacement(DialogChatPlacement::Center);
+                dialog->animateInRandomSide();
+                dialog->addToMainScene();
+            }
+        return CCKeyboardDispatcher::dispatchKeyboardMSG(key,down,repeat);
+    }
+};
+*/
