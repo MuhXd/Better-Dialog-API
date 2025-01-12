@@ -60,7 +60,7 @@ public:
           auto l = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::createWithObjects(jsonread.first,jsonread.second));
           return l;
    };
-   
+
    static VP_DialogLayer* create(matjson::Value json) {
           std::pair<CCArray*, int> jsonread = Viper_funnyutils::readjsonData(json);
           auto l = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::createWithObjects(jsonread.first,jsonread.second));
@@ -151,11 +151,6 @@ public:
    
     static VP_DialogLayer* createDialogLayer(CCArray* objects, int background) {
         return reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::createWithObjects(objects,background));
-   };
-    static VP_DialogLayer* createDialogLayer(DialogObject* object, std::string background) {
-       VP_DialogLayer* x = reinterpret_cast<VP_DialogLayer*>(VP_DialogLayer::create(object,2));
-       x->setBackground(background);
-       return x;
    };
     // som
    static VP_DialogObject* create(gd::string character,
