@@ -14,14 +14,14 @@
 class DialogObject_DLL DialogApi {
   public:
 	static VP_DialogObject *create(std::string const &character = "", std::string const &text = "", int characterFrame = 1, float textScale = 1.0f, bool skippable = false, cocos2d::ccColor3B color = cocos2d::ccWHITE, std::function<void()> callback = nullptr) {
-		VP_DialogObject *c = VP_DialogObject::create(character text, cocos2d::CCNode * characterFrame, textScale, skippable, color);
+		VP_DialogObject *c = VP_DialogObject::create(character,text, characterFrame, textScale, skippable, color);
 		if (callback) {
 			c->AddCallback(callback);
 		}
 		return c
 	}
 	static VP_DialogObject *create(std::string const &character = "", std::string const &text = "", std::string const &characterFrame = "", float textScale = 1.0f, bool skippable = false, cocos2d::ccColor3B color = cocos2d::ccWHITE, std::function<void()> callback = nullptr) {
-		VP_DialogObject *c = VP_DialogObject::create(character text, cocos2d::CCNode * characterFrame, textScale, skippable, color);
+		VP_DialogObject *c = VP_DialogObject::create(text, characterFrame, textScale, skippable, color);
 		if (callback) {
 			c->AddCallback(callback);
 		}
