@@ -198,7 +198,13 @@ VP_DialogObject *DialogApi::create(matjson::Value data, std::function<void()> ca
 };
 
 VP_DialogLayer *DialogApi::create(DialogObject *object, int background, std::function<void()> callback) {
-	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(DialogLayer::create(object, background));
+	#ifdef GEODE_IS_MACOS
+		CCArray* macosFix = CCArray::create();
+		macosFix->addObject(object);
+		VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(DialogLayer::createWithObjects(macosFix, background));
+	#else
+		VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(DialogLayer::create(object, background));
+	#endif
 	if (callback) {
 		c->addCallbackCustom(callback);
 	}
@@ -206,7 +212,13 @@ VP_DialogLayer *DialogApi::create(DialogObject *object, int background, std::fun
 };
 
 VP_DialogLayer *DialogApi::create(DialogObject *object, std::string background, std::function<void()> callback) {
-	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(DialogLayer::create(object, 2));
+	#ifdef GEODE_IS_MACOS
+		CCArray* macosFix = CCArray::create();
+		macosFix->addObject(object);
+		VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(DialogLayer::createWithObjects(macosFix, 2));
+	#else
+		VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(DialogLayer::create(object, 2));
+	#endif
 	if (!background.empty()) {
 		c->setBackground(background);
 	}
