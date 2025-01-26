@@ -3,13 +3,18 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-
+set(GEODE_BINDINGS_REPO_PATH C:/Users/momo2/Downloads/TestCD/bindings)
 project(CustomDialogProfiles VERSION 1.0.0)
 
 add_library(${PROJECT_NAME} SHARED
     src/main.cpp
     # Add any extra C++ source files here
 )
+
+if (DEFINED ENV{GITHUB_ACTIONS})
+  target_compile_definitions(${PROJECT_NAME} PRIVATE GITHUB_ACTIONS)
+  message(STATUS "GitHub Actions build detected")
+endif()
 
 if (PROJECT_IS_TOP_LEVEL)
     target_compile_definitions(${PROJECT_NAME} PRIVATE VIPER_DialogObject_EXPORTING)

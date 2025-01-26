@@ -1,5 +1,5 @@
 {
-	"geode": "4.1.1",
+	"geode": "4.2.0",
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
@@ -9,7 +9,7 @@
 	"api": {
 		"include": [
 			"include/Main.hpp",
-			"include/ccDialogHooks.hpp"
+			"include/headers.h"
 		]
 	},
 	"links": {
