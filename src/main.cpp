@@ -173,36 +173,7 @@ DialogLayer *VP_DialogLayer::create(matjson::Value data) {
 	}
 	return VP_DialogLayer::createWithObjects(letsgo.first, letsgo.second);
 }
-bool VP_DialogLayer::init(DialogObject *p0, cocos2d::CCArray *p1, int p2) {
-	if (!DialogLayer::init(p0, p1, p2))
-		return false;
 
-	this->m_fields->m_pfpPosFixer = CCNode::create();
-	this->m_fields->m_pfpPosFixer->setPositionX(-143);
-	m_mainLayer->addChild(this->m_fields->m_pfpPosFixer);
-
-	return true;
-}
-void VP_DialogLayer::displayDialogObject(DialogObject *p0) {
-	DialogLayer::displayDialogObject(p0);
-	if (!this->m_fields->m_BackgroundOverride.empty() && !(this->m_fields->m_BackgroundAlreadySet == this->m_fields->m_BackgroundOverride)) {
-		VP_DialogLayer::setBackground(this->m_fields->m_BackgroundOverride);
-	};
-	if (this->m_characterSprite) {
-		if (auto x = this->m_fields->m_cur_Customprofile) {
-			x->removeFromParent();
-		};
-	}
-	if (VP_DialogObject *dialog = typeinfo_cast<VP_DialogObject *>(p0)) {
-		if (dialog->CustomChar) {
-			this->m_fields->m_cur_Customprofile = dialog->CustomChar;
-			this->m_fields->m_pfpPosFixer->addChild(dialog->CustomChar);
-		}
-		if (dialog->callbackOnObject) {
-			VP_DialogLayer::addCallbackCustom(dialog->callbackOnObject);
-		}
-	}
-}
 
 VP_DialogObject *DialogApi::create(std::string const &character, std::string const &text, int characterFrame, float textScale, bool skippable, cocos2d::ccColor3B color, std::function<void()> callback ) {
 	VP_DialogObject *c = VP_DialogObject::create(character, text, characterFrame, textScale, skippable, color);
@@ -290,6 +261,42 @@ VP_DialogLayer *DialogApi::createDialogLayer(DialogObject *object, CCArray *obje
 		c->addCallbackCustom(callback);
 	}
 	return c;
+};
+
+class $modify(VP_DialogLayer_Expand, DialogLayer) {
+    bool init(DialogObject *p0, cocos2d::CCArray *p1, int p2) {
+        if (!DialogLayer::init(p0, p1, p2))
+		    return false;
+
+        VP_DialogLayer* Convert = reinterpret_cast<VP_DialogLayer*>(this);
+        Convert->m_fields->m_pfpPosFixer = CCNode::create();
+        Convert->m_fields->m_pfpPosFixer->setPositionX(-143);
+        m_mainLayer->addChild(Convert->m_fields->m_pfpPosFixer);
+
+        return true;
+    }
+	void displayDialogObject(DialogObject *p0) {
+        VP_DialogLayer* Convert = reinterpret_cast<VP_DialogLayer*>(this);
+        DialogLayer::displayDialogObject(p0);
+        if (!Convert->m_fields->m_BackgroundOverride.empty() && !(Convert->m_fields->m_BackgroundAlreadySet == Convert->m_fields->m_BackgroundOverride)) {
+            Convert->setBackground(Convert->m_fields->m_BackgroundOverride);
+        };
+        if (Convert->m_characterSprite) {
+            if (auto x = Convert->m_fields->m_cur_Customprofile) {
+                x->removeFromParent();
+            };
+        }
+        if (VP_DialogObject *dialog = typeinfo_cast<VP_DialogObject *>(p0)) {
+            if (dialog->CustomChar) {
+                Convert->m_fields->m_cur_Customprofile = dialog->CustomChar;
+                Convert->m_fields->m_pfpPosFixer->addChild(dialog->CustomChar);
+            }
+            if (dialog->callbackOnObject) {
+                Convert->addCallbackCustom(dialog->callbackOnObject);
+            }
+        }
+
+    }
 };
 
 #ifndef GITHUB_ACTIONS

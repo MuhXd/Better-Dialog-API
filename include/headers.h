@@ -29,9 +29,7 @@ class $modify(VP_DialogLayer, DialogLayer) {
 		std::string m_BackgroundAlreadySet;
 	};
     static DialogLayer* create(matjson::Value data);
-	bool init(DialogObject *p0, cocos2d::CCArray *p1, int p2);
 	void addCallbackCustom(std::function<void()> m_callback);
 	void setBackground(std::string backgroundBG);
 	void setBackground(int backgroundBG);
-	void displayDialogObject(DialogObject *p0);
 };
