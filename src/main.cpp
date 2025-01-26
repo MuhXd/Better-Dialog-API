@@ -1,3 +1,4 @@
+#include "../include/Main.hpp"
 #include "../include/headers.h"
 #include <Geode/Geode.hpp>
 using namespace geode::prelude;
@@ -145,32 +146,32 @@ void m_DelegateCallBack::dialogClosed(DialogLayer *p0) {
 		this->m_callback();
 	}
 };
-DialogLayer* VP_DialogLayer::create(matjson::Value data) {
-        std::pair<CCArray*, int> letsgo;
-        letsgo.second = 2;
-        letsgo.first = CCArray::create();
-        if (!data.isArray() && !data.isObject()) {
-            letsgo.first->addObject(DialogObject::create("uh oh","it seems like the json provided is invalid",2,1.0f,false,ccWHITE));
-            return VP_DialogLayer::createWithObjects(letsgo.first,letsgo.second);
-        }
-     if (data.contains("lines") && data["lines"].isArray()) {
-            for (const auto lols : data["lines"].asArray().unwrap()) {
-                letsgo.first->addObject(VP_DialogObject::create(lols));
-            }
-     }
-    if (letsgo.first->count() < 1)  letsgo.first->addObject(DialogObject::create("uh oh","it seems lines is empty",2,1.0f,false,ccWHITE));
-    
-    if (data.contains("color")) {
-        if ( data["color"].isNumber()) {
-        letsgo.second = data["color"].asInt().unwrapOr(2);
-        } else if (data["color"].isString()) {
-            DialogLayer* x = VP_DialogLayer::createWithObjects(letsgo.first,letsgo.second);
-            reinterpret_cast<VP_DialogLayer*>(x)->setBackground(data["color"].asString().unwrapOr("0"));
-            return x;
-        }
-    }
-    return VP_DialogLayer::createWithObjects(letsgo.first,letsgo.second);
+DialogLayer *VP_DialogLayer::create(matjson::Value data) {
+	std::pair<CCArray *, int> letsgo;
+	letsgo.second = 2;
+	letsgo.first = CCArray::create();
+	if (!data.isArray() && !data.isObject()) {
+		letsgo.first->addObject(DialogObject::create("uh oh", "it seems like the json provided is invalid", 2, 1.0f, false, ccWHITE));
+		return VP_DialogLayer::createWithObjects(letsgo.first, letsgo.second);
+	}
+	if (data.contains("lines") && data["lines"].isArray()) {
+		for (const auto lols : data["lines"].asArray().unwrap()) {
+			letsgo.first->addObject(VP_DialogObject::create(lols));
+		}
+	}
+	if (letsgo.first->count() < 1)
+		letsgo.first->addObject(DialogObject::create("uh oh", "it seems lines is empty", 2, 1.0f, false, ccWHITE));
 
+	if (data.contains("color")) {
+		if (data["color"].isNumber()) {
+			letsgo.second = data["color"].asInt().unwrapOr(2);
+		} else if (data["color"].isString()) {
+			DialogLayer *x = VP_DialogLayer::createWithObjects(letsgo.first, letsgo.second);
+			reinterpret_cast<VP_DialogLayer *>(x)->setBackground(data["color"].asString().unwrapOr("0"));
+			return x;
+		}
+	}
+	return VP_DialogLayer::createWithObjects(letsgo.first, letsgo.second);
 }
 bool VP_DialogLayer::init(DialogObject *p0, cocos2d::CCArray *p1, int p2) {
 	if (!DialogLayer::init(p0, p1, p2))
@@ -202,6 +203,94 @@ void VP_DialogLayer::displayDialogObject(DialogObject *p0) {
 		}
 	}
 }
+
+VP_DialogObject *DialogApi::create(std::string const &character, std::string const &text, int characterFrame, float textScale, bool skippable, cocos2d::ccColor3B color, std::function<void()> callback ) {
+	VP_DialogObject *c = VP_DialogObject::create(character, text, characterFrame, textScale, skippable, color);
+	if (callback) {
+		c->AddCallback(callback);
+	}
+	return c;
+};
+VP_DialogObject *DialogApi::create(std::string const &character, std::string const &text , CCNode *characterFrame , float textScale, bool skippable, cocos2d::ccColor3B color, std::function<void()> callback) {
+	VP_DialogObject *c = VP_DialogObject::create(text, character, characterFrame, textScale, skippable, color);
+	if (callback) {
+		c->AddCallback(callback);
+	}
+	return c;
+};
+VP_DialogObject *DialogApi::create(matjson::Value data, std::function<void()> callback) {
+	VP_DialogObject *c = VP_DialogObject::create(data);
+	if (callback) {
+		c->AddCallback(callback);
+	}
+    return c;
+};
+
+VP_DialogLayer *DialogApi::create(DialogObject *object, int background, std::function<void()> callback) {
+	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(DialogLayer::create(object, background));
+	if (callback) {
+		c->addCallbackCustom(callback);
+	}
+	return c;
+};
+
+VP_DialogLayer *DialogApi::create(DialogObject *object, std::string background, std::function<void()> callback) {
+	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(DialogLayer::create(object, 2));
+	if (!background.empty()) {
+		c->setBackground(background);
+	}
+	if (callback) {
+		c->addCallbackCustom(callback);
+	}
+	return c;
+};
+VP_DialogLayer *DialogApi::createWithJson(matjson::Value json) {
+	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(VP_DialogLayer::create(json));
+	return c;
+};
+
+VP_DialogLayer *DialogApi::createWithJson(matjson::Value json, std::function<void()> m_callback) {
+	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(VP_DialogLayer::create(json));
+	c->addCallbackCustom(m_callback);
+	return c;
+};
+
+VP_DialogLayer *DialogApi::create(CCArray *objects, int background, std::function<void()> callback) {
+	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(VP_DialogLayer::createWithObjects(objects, background));
+	if (callback) {
+		c->addCallbackCustom(callback);
+	}
+	return c;
+};
+
+VP_DialogLayer *DialogApi::create(CCArray *objects, std::string background, std::function<void()> callback) {
+	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(VP_DialogLayer::createWithObjects(objects, 2));
+	if (callback) {
+		c->addCallbackCustom(callback);
+	}
+	if (!background.empty()) {
+		c->setBackground(background);
+	};
+	return c;
+};
+
+VP_DialogLayer *DialogApi::createDialogLayer(DialogObject *object, CCArray *objects, std::string background, std::function<void()> callback) {
+	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(VP_DialogLayer::createDialogLayer(object, objects, 2));
+	if (callback) {
+		c->addCallbackCustom(callback);
+	}
+	if (!background.empty()) {
+		c->setBackground(background);
+	};
+	return c;
+};
+VP_DialogLayer *DialogApi::createDialogLayer(DialogObject *object, CCArray *objects, int background, std::function<void()> callback) {
+	VP_DialogLayer *c = reinterpret_cast<VP_DialogLayer *>(VP_DialogLayer::createDialogLayer(object, objects, background));
+	if (callback) {
+		c->addCallbackCustom(callback);
+	}
+	return c;
+};
 
 #ifndef GITHUB_ACTIONS
 #include <Geode/modify/CCKeyboardDispatcher.hpp>
