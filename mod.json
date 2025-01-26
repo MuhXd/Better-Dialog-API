@@ -18,8 +18,8 @@
 	"id": "viper.better_dialog",
 	"name": "Better Dialog API",
 	"early-load": true,
-	"version": "v1.0.3",
-	"tags": ["developer","offline","interface"],
+	"version": "v1.0.4",
+	"tags": ["developer","offline"],
 	"developer": "Viper",
 	"description": "Better Dialog API adds a easier more managable way to modify Dialog!"
 }

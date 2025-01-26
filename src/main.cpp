@@ -158,7 +158,7 @@ DialogLayer* VP_DialogLayer::create(matjson::Value data) {
                 letsgo.first->addObject(VP_DialogObject::create(lols));
             }
      }
-    if (letsgo.first->count() < 1)  letsgo.first->addObject(DialogObject::create("uh oh","it seems lines it empty",2,1.0f,false,ccWHITE));
+    if (letsgo.first->count() < 1)  letsgo.first->addObject(DialogObject::create("uh oh","it seems lines is empty",2,1.0f,false,ccWHITE));
     
     if (data.contains("color")) {
         if ( data["color"].isNumber()) {
